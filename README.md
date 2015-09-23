@@ -1,12 +1,12 @@
-# CryoEM
-*Oh no, yet another attempt at Cryo-EM.*
+# CroMagnon
+*Oh no, yet another attempt at Cryo-EM data analysis.*
 
 ## authors
 - David W. Hogg (NYU)
 
 ## license
 Copyright 2015 the authors.
-**CryoEM** is open-source software licensed under the *MIT License*.
+**CroMagnon** is open-source software licensed under the *MIT License*.
 See the file `LICENSE` for details.
 
 ## dependencies
@@ -18,3 +18,4 @@ See the file `LICENSE` for details.
 ## comments
 - Why are we doing this?
 - Can we apply this to astronomical data?
+- Should we take [this Coursera course](https://www.coursera.org/learn/cryo-em)?
