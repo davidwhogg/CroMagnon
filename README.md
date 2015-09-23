@@ -11,7 +11,7 @@ See the file `LICENSE` for details.
 
 ## data
 To start, we will work with data from the
-[EMPIAR]{http://www.ebi.ac.uk/pdbe/emdb/empiar/}.
+[EMPIAR](http://www.ebi.ac.uk/pdbe/emdb/empiar/)
 
 ## comments
 - Why are we doing this?
