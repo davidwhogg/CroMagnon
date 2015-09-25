@@ -1,5 +1,5 @@
 # CroMagnon
-*Oh no, yet another attempt at Cryo-EM tomographic data analysis.*
+*Oh no, yet another attempt at Cryo-EM and CET data analysis.*
 
 ## authors
 - David W. Hogg (NYU)
@@ -12,8 +12,12 @@ See the file `LICENSE` for details.
 ## dependencies
 - To start, we will work with data from the
 [EMPIAR](http://www.ebi.ac.uk/pdbe/emdb/empiar/).
+Data set EMPIAR-10009 looks like it might be a good CET data set.
+Data set EMPIAR-10029 is a simulated Cryo-EM data set.
+Data set EMPIAR-10032 looks like it might be a good Cryo-EM data set.
 - We will probably need to use
 [EMAN2](http://blake.bcm.edu/emanwiki/EMAN2) to read the image data files.
+(Yes, they invented a new image format.)
 
 ## never-asked questions
 - *Why are we doing this?*
