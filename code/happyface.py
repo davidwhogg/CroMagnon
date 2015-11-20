@@ -5,6 +5,7 @@ Copyright 2015 David W. Hogg (NYU)
 
 import numpy as np
 from matplotlib import pylab as plt
+plt.rcParams['figure.figsize'] = 10, 10
 from scipy.misc import logsumexp
 
 def get_Truth():
@@ -45,6 +46,9 @@ def ln_marginal_like(data, model, noiselevel):
                 ii += 1
     return np.sum(logsumexp(ln_like_vec, axis=0))
 
+def objective(model, data, noiselevel):
+    return -2. * ln_marginal_like(data, model, noiselevel)
+
 def plot_one_image(ax, image, noiselevel):
     ax.imshow(image,
               cmap="gray",
@@ -57,18 +61,34 @@ if __name__ == "__main__":
     # make truth
     np.random.seed(42)
     Truth = get_Truth()
+    ny, nx = Truth.shape
 
     # make and show data
     noiselevel = 0.2
     data = make_data(Truth, 1000, noiselevel)
-    for ii in range(8):
-        plt.clf()
-        plot_one_image(plt.gca(), data[ii], noiselevel)
-        plt.savefig("data_{:03d}.png".format(ii))
+    plt.clf()
+    foo, axes = plt.subplots(4, 4, sharex='col', sharey='row')
+    axes = axes.flatten()
+    for ii, ax in enumerate(axes):
+        plot_one_image(ax, data[ii], noiselevel)
+    plt.savefig("data.png")
 
     # initialize model
-    model = np.zeros_like(Truth)
-    model[2:6,2:6] = np.random.uniform(size=(4,4))
-    print(ln_marginal_like(data, model, noiselevel))
+    model0 = np.zeros_like(Truth)
+    model0[2:6,2:6] = np.random.uniform(size=(4,4))
+    model0 = model0.ravel()
+    plt.clf()
+    foo, axes = plt.subplots(4, 4, sharex='col', sharey='row')
+    axes = axes.flatten()
+    plot_one_image(axes[0], model0.reshape((ny, nx)), noiselevel)
+    plt.savefig("modelpng")
 
     # optimize
+    from scipy import optimize as op
+    for ii in range(12):
+        print("starting optimization {}".format(ii))
+        result = op.minimize(objective, model0, args=(data, noiselevel),
+                             options={"maxiter": 2})
+        model0 = result["x"]
+        plot_one_image(axes[ii+1], model0.reshape((ny, nx)), noiselevel)
+        plt.savefig("modelpng")
