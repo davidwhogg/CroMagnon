@@ -67,7 +67,7 @@ if __name__ == "__main__":
     ny, nx = Truth.shape
 
     # make and show data
-    noiselevel = 0.2
+    noiselevel = 0.5
     data = make_data(Truth, 1000, noiselevel)
     plt.clf()
     foo, axes = plt.subplots(4, 4, sharex='col', sharey='row')
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     # optimize
     from scipy import optimize as op
-    for ii in range(16):
+    for ii in range(len(axes)-1):
         result = op.minimize(objective, model0, args=(data, noiselevel),
                              options={"maxiter": 1})
         model0 = result["x"]
