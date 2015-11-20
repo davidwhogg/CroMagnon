@@ -50,11 +50,14 @@ def objective(model, data, noiselevel):
     return -2. * ln_marginal_like(data, model, noiselevel)
 
 def plot_one_image(ax, image, noiselevel):
-    ax.imshow(image,
-              cmap="gray",
-              interpolation="nearest",
-              vmin=0.-2*noiselevel, vmax=1.+2*noiselevel)
-    return None
+    return ax.imshow(image,
+                     cmap="gray",
+                     interpolation="nearest",
+                     vmin=0.-2*noiselevel, vmax=1.+2*noiselevel)
+
+def hogg_savefig(fn):
+    print("saving {}".format(fn))
+    return plt.savefig(fn)
 
 if __name__ == "__main__":
 
@@ -71,7 +74,7 @@ if __name__ == "__main__":
     axes = axes.flatten()
     for ii, ax in enumerate(axes):
         plot_one_image(ax, data[ii], noiselevel)
-    plt.savefig("data.png")
+    hogg_savefig("data.png")
 
     # initialize model
     model0 = np.zeros_like(Truth)
@@ -81,14 +84,13 @@ if __name__ == "__main__":
     foo, axes = plt.subplots(4, 4, sharex='col', sharey='row')
     axes = axes.flatten()
     plot_one_image(axes[0], model0.reshape((ny, nx)), noiselevel)
-    plt.savefig("modelpng")
+    hogg_savefig("model.png")
 
     # optimize
     from scipy import optimize as op
-    for ii in range(12):
-        print("starting optimization {}".format(ii))
+    for ii in range(16):
         result = op.minimize(objective, model0, args=(data, noiselevel),
-                             options={"maxiter": 2})
+                             options={"maxiter": 1})
         model0 = result["x"]
         plot_one_image(axes[ii+1], model0.reshape((ny, nx)), noiselevel)
-        plt.savefig("modelpng")
+        hogg_savefig("model.png")
