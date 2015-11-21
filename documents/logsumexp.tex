@@ -1,0 +1,75 @@
+%% This file is part of the CroMagnon project
+%% Copyright 2015 David W. Hogg
+
+\documentclass[12pt]{article}
+
+\newcommand{\like}{L}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\inverse}{^{-1}}
+\newcommand{\transpose}{^{\mathsf{T}}}
+
+\begin{document}
+
+\section*{Notes on log-sum-exp}
+\noindent
+David W. Hogg (NYU) (SCDA) (MPIA)
+
+\bigskip
+
+Generically in probabilistic inference problems we encounter quantities like
+\begin{eqnarray}
+  Q
+  &=& \ln\sum_{k=1}^K\exp q_k
+  \quad,
+\end{eqnarray}
+where the $q_k$ are simple functions (for example, they might have simple
+derivatives with respect to parameters $\theta$).
+Let's take the full derivative of $Q$:
+\begin{eqnarray}
+  \frac{\dd Q}{\dd\theta}
+  &=& \left[\sum_{k=1}^K\exp q_k\right]\inverse
+      \,\frac{\dd}{\dd\theta}\left[\sum_{k=1}^K\exp q_k\right] \\
+  &=& \left[\sum_{k=1}^K\exp q_k\right]\inverse
+      \,\left[\sum_{k=1}^K\frac{\dd q_k}{\dd\theta}\exp q_k\right]
+  \quad;
+\end{eqnarray}
+that is, the derivative of $Q$ is just the $\exp q_k$-weighted average
+of derivatives of the $q_k$.
+That's good!
+
+In the particular case of cryo-EM, the objective function is related
+to a marginalized likelihood $\like$ which looks like
+\begin{eqnarray}
+  Q
+  &=&
+  \sum_{n=1}^N Q_n \\
+  Q_n
+  &=& -2\,\ln\like_n \\
+  &=& -2\,\ln\sum_{k=1}^K P_k\,\exp(\ln\like_{nk}) \\
+  &=& -2\,\ln\sum_{k=1}^K P_k\,\exp(-\frac{1}{2}\,\chi^2_{nk}) \\
+  \chi^2_{nk}
+  &=& [y_n - \mu_{nk}]\transpose\cdot C_n\inverse\cdot [y_n - \mu_{nk}]
+  \quad,
+\end{eqnarray}
+where the sum is over $k$ samples or grid locations in angles and
+offets, the $P_k$ are weights for those samples (typically roughly
+$1/K$), $y_n$ is the $n$th data point (tiny image), the $\mu_{nk}$ are
+the predictionsion for data point $n$ at angles and offsets $k$, and
+$C_n$ is a covariance matrix for the (Gaussian) noise model.
+The predictions $\mu_{nk}$ depend on the three-dimensional shape
+parameters or representation $\theta$.
+
+Taking derivatives with respect to parameters,
+\begin{eqnarray}
+  \frac{\dd Q}{\dd\theta}
+  &=&
+  \sum_{n=1}^N \frac{\dd Q_n}{\dd\theta} \\
+  \frac{\dd Q_n}{\dd\theta}
+  &=& -2\,\left[\sum_{k=1}^K P_k\,\exp(-\frac{1}{2}\,\chi^2_{nk})\right]\inverse
+        \,\left[\sum_{k=1}^K -\frac{1}{2}\,P_k\,\exp(-\frac{1}{2}\,\chi^2_{nk})\,\frac{\dd\chi^2_{nk}}{\dd\theta}\right] \\
+  \frac{\dd\chi^2_{nk}}{\dd\theta}
+  &=& -2\,[y_n - \mu_{nk}]\transpose\cdot C_n\inverse\cdot\frac{\dd\mu_{nk}}{\dd\theta}
+  \quad,
+\end{eqnarray}
+
+\end{document}
