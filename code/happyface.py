@@ -67,8 +67,8 @@ if __name__ == "__main__":
     ny, nx = Truth.shape
 
     # make and show data
-    noiselevel = 0.5
-    data = make_data(Truth, 1000, noiselevel)
+    noiselevel = 0.25
+    data = make_data(Truth, 512, noiselevel)
     plt.clf()
     foo, axes = plt.subplots(4, 4, sharex='col', sharey='row')
     axes = axes.flatten()
