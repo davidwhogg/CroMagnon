@@ -6,6 +6,8 @@
 % - Clean up all mentions of ``DWH'' in the code.
 
 \documentclass[12pt]{article}
+\usepackage{url}
+\input{vc}
 
 % useless formatting
 \linespread{1.08333} % 10/13 spacing
@@ -25,11 +27,11 @@
 \newcommand{\like}{L}
 \newcommand{\setof}[1]{\left\{{#1}\right\}}
 \newcommand{\dd}{\mathrm{d}}
-\newcommand{\kth}[1]{{{#1}^{(k)}}}
 
-\begin{document}
+\begin{document}\sloppy\sloppypar
 
-\section*{Inferring a 3-d Gaussian variance tensor from 2-d projections at unknown angles}
+\section*{Inferring a 3-d Gaussian variance tensor \\
+          from 2-d projections at unknown angles}
 \noindent
 David W. Hogg (NYU) (SCDA) (MPIA)
 
@@ -121,7 +123,8 @@ $\sigma$ is the amplitude of the iid noise,
 and $g_{nm}$ is a draw from a univariate Gaussian of zero mean and unit variance.
 (Apologies for overloading the $\sigma$ variable.
 Alternate suggestions welcome.)
-This image formation model implies this (unmarginalized) likelihood:
+This image formation model implies this (unmarginalized)
+log-likelihood (dropping an additive constant):
 \begin{eqnarray}
   -2\,\ln\like(a,V,\setof{\phi_n}_{n=1}^N) &=& \sum_{n=1}^N \sum_{m=1}^M \frac{[y_{nm} - Y_{nm}]^2}{\sigma^2}
   \\
@@ -138,39 +141,49 @@ parameters $\setof{\phi_n}_{n=1}^N$ ($5\,N$ degrees of freedom).
 
 Now what we really want is to marginalize out the projections and
 offsets.
-The marginalized likelihood looks like
+The marginalized log-likelihood (again, dropping a constant) looks like
 \begin{eqnarray}
-  -2\,\ln\like(a,V) &=& \sum_{n=1}^N -2\,\ln \int\exp(-\frac{1}{2}\,\sum_{m=1}^M \frac{[y_{nm} - Y_{nm}]^2}{\sigma^2})\,p(\phi_n)\,\dd\phi_n
+  -2\,\ln\like(a,V) &=& -2\,\sum_{n=1}^N\ln\int\exp(-\frac{1}{2}\,\sum_{m=1}^M \frac{[y_{nm} - Y_{nm}]^2}{\sigma^2})\,p(\phi_n)\,\dd\phi_n
   \quad,
 \end{eqnarray}
-where it is now a function only of $\setof{a,V}$ because we have
-marginalized out all $5\,N$ nuisance parameters!
+where $p(\phi)$ is the prior over the 5 nuisance parameters for any
+individual datum, and the likelihood is now a function only of
+$\setof{a,V}$ because we have marginalized out all $5\,N$ nuisance
+parameters.
 Note that this horror is a log of an integral of an exponential of
 something simple.
 That's going to hurt (and going to suggest to our competitors to use
 E-M, but we won't be so weak).
+The prior $p(\phi)$ over nuisance parameters will be isotropic in
+projection angles, isotropic in rotations in the 2-d space, and
+uninformative---somehow---in offsets.
 
-Imagine, for some fixed $\setof{a, V}$, we had a fair set of $K$
-samples $\kth{\phi}_n$ of the nuisance parameters $\phi_n$ for each
-datum $y_n$.
+Imagine we had a large, dense, fair set of $K$ samples
+$\phi_k\equiv\setof{P_k, \mu_k}$ from the prior $p(\phi)$ over
+nuisance parameters.
 Then we could approximate the marginalization integrals with sums, and
-obtain
+obtain (once again dropping a constant, and a $\ln K$)
 \begin{eqnarray}
-  -2\,\ln\like(a,V) &\approx& \sum_{n=1}^N -2\,\ln \frac{1}{K}\,\sum_{k=1}^K\exp(-\frac{1}{2}\,\sum_{m=1}^M \frac{[y_{nm} - \kth{Y}_{nm}]^2}{\sigma^2})
+  -2\,\ln\like(a,V) &\approx& -2\,\sum_{n=1}^N\ln\frac{1}{K}\,\sum_{k=1}^K\exp(-\frac{1}{2}\,\sum_{m=1}^M \frac{[y_{nm} - Y_{km}]^2}{\sigma^2})
   \\
-  \kth{Y}_{nm} &\equiv& a\,\normal(\xi_m\given\kth{\mu}_n,\kth{V}_n)
+  Y_{km} &\equiv& a\,\normal(\xi_m\given\mu_k,V_k)
   \\
-  \kth{V}_n &\equiv& \kth{P}_n\transpose\cdot V\cdot \kth{P}_n
-  \\
-  \kth{\phi}_n &\equiv& \setof{\kth{P}_n, \kth{\mu}_n}
+  V_k &\equiv& P_k\transpose\cdot V\cdot P_k
   \quad,
 \end{eqnarray}
-where the logsumexp has reared its head, and my notation is foul.
+where now the logsumexp has reared its head.
 
 \section{Method and implementation}
 
 \section{Experiments}
 
 \section{Discussion}
+
+
+\bigskip
+
+Everything in this project, including this document itself, is
+available at \giturl.  If you want this exact version, clone at git
+hash \texttt{\githash~(\gitdate)}.
 
 \end{document}
