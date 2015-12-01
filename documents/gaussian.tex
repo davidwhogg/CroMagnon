@@ -13,17 +13,19 @@
 \setlength{\parskip}{0ex}
 
 % math definitions
+\newcommand{\normal}{N}
 \newcommand{\unitvec}[1]{\hat{#1}}
 \newcommand{\ehat}{\unitvec{e}}
 \newcommand{\xhat}{\unitvec{x}}
 \newcommand{\yhat}{\unitvec{y}}
 \newcommand{\zhat}{\unitvec{z}}
-\newcommand{\normal}{N}
+\newcommand{\transpose}{^{\mathsf{T}}}
+\newcommand{\inverse}{^{-1}}
 \newcommand{\given}{\,|\,}
 \newcommand{\like}{L}
+\newcommand{\setof}[1]{\left\{{#1}\right\}}
 \newcommand{\dd}{\mathrm{d}}
-\newcommand{\inverse}{^{-1}}
-\newcommand{\transpose}{^{\mathsf{T}}}
+\newcommand{\kth}[1]{{{#1}^{(k)}}}
 
 \begin{document}
 
@@ -94,7 +96,7 @@ The question is:
 Given these data, \emph{can we infer the 3-d variance tensor $V$?}
 And if we can, how accurately, and what does it depend on?
 We are going to attempt the inference by maximizing a marginalized
-likelihood, marginalizing out all $5N$ unknown projection, rotation,
+likelihood, marginalizing out all $5\,N$ unknown projection, rotation,
 and shift parameters.
 
 There is another similar problem we could pose in which each datum
@@ -102,14 +104,14 @@ $y_n$ is a \emph{sampling} from a two-dimensional projection of the
 Gaussian blob, possibly also with a uniform background (dc) component.
 That's beyond our current scope!
 
-\section{Marginalized likelihood and the sampling approximation}
+\section{Marginalized likelihood and sampling}
 
 The likelihood we are going to use is based on the image formation
 model
-\begin{equation}
-  y_{nm} = a\,\normal(\xi_m\given\mu_n,V_n) + \sigma\,g_{nm}
+\begin{eqnarray}
+  y_{nm} &=& a\,\normal(\xi_m\given\mu_n,V_n) + \sigma\,g_{nm}
   \quad,
-\end{equation}
+\end{eqnarray}
 where $y_{nm}$ is the $m$th pixel of image $y_n$,
 $a$ is the overall amplitude of the 3-d Gaussian blob,
 $\xi_m$ is the 2-d vector location of pixel $m$,
@@ -119,5 +121,56 @@ $\sigma$ is the amplitude of the iid noise,
 and $g_{nm}$ is a draw from a univariate Gaussian of zero mean and unit variance.
 (Apologies for overloading the $\sigma$ variable.
 Alternate suggestions welcome.)
+This image formation model implies this (unmarginalized) likelihood:
+\begin{eqnarray}
+  -2\,\ln\like(a,V,\setof{\phi_n}_{n=1}^N) &=& \sum_{n=1}^N \sum_{m=1}^M \frac{[y_{nm} - Y_{nm}]^2}{\sigma^2}
+  \\
+  Y_{nm} &\equiv& a\,\normal(\xi_m\given\mu_n,V_n)
+  \\
+  V_n &\equiv& P_n\transpose\cdot V\cdot P_n
+  \\
+  \phi_n &\equiv& \setof{P_n, \mu_n}
+  \quad,
+\end{eqnarray}
+where the (unmarginalized) likelihood depends on the 3-d parameters
+$\setof{a,V}$ (4 degrees of freedom) and also the projection
+parameters $\setof{\phi_n}_{n=1}^N$ ($5\,N$ degrees of freedom).
+
+Now what we really want is to marginalize out the projections and
+offsets.
+The marginalized likelihood looks like
+\begin{eqnarray}
+  -2\,\ln\like(a,V) &=& \sum_{n=1}^N -2\,\ln \int\exp(-\frac{1}{2}\,\sum_{m=1}^M \frac{[y_{nm} - Y_{nm}]^2}{\sigma^2})\,p(\phi_n)\,\dd\phi_n
+  \quad,
+\end{eqnarray}
+where it is now a function only of $\setof{a,V}$ because we have
+marginalized out all $5\,N$ nuisance parameters!
+Note that this horror is a log of an integral of an exponential of
+something simple.
+That's going to hurt (and going to suggest to our competitors to use
+E-M, but we won't be so weak).
+
+Imagine, for some fixed $\setof{a, V}$, we had a fair set of $K$
+samples $\kth{\phi}_n$ of the nuisance parameters $\phi_n$ for each
+datum $y_n$.
+Then we could approximate the marginalization integrals with sums, and
+obtain
+\begin{eqnarray}
+  -2\,\ln\like(a,V) &\approx& \sum_{n=1}^N -2\,\ln \frac{1}{K}\,\sum_{k=1}^K\exp(-\frac{1}{2}\,\sum_{m=1}^M \frac{[y_{nm} - \kth{Y}_{nm}]^2}{\sigma^2})
+  \\
+  \kth{Y}_{nm} &\equiv& a\,\normal(\xi_m\given\kth{\mu}_n,\kth{V}_n)
+  \\
+  \kth{V}_n &\equiv& \kth{P}_n\transpose\cdot V\cdot \kth{P}_n
+  \\
+  \kth{\phi}_n &\equiv& \setof{\kth{P}_n, \kth{\mu}_n}
+  \quad,
+\end{eqnarray}
+where the logsumexp has reared its head, and my notation is foul.
+
+\section{Method and implementation}
+
+\section{Experiments}
+
+\section{Discussion}
 
 \end{document}
