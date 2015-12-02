@@ -162,7 +162,7 @@ Imagine we had a large, dense, fair set of $K$ samples
 $\phi_k\equiv\setof{P_k, \mu_k}$ from the prior $p(\phi)$ over
 nuisance parameters.
 Then we could approximate the marginalization integrals with sums, and
-obtain (once again dropping a constant, and a $\ln K$)
+obtain (once again dropping a constant)
 \begin{eqnarray}
   -2\,\ln\like(a,V) &\approx& -2\,\sum_{n=1}^N\ln\frac{1}{K}\,\sum_{k=1}^K\exp(-\frac{1}{2}\,\sum_{m=1}^M \frac{[y_{nm} - Y_{km}]^2}{\sigma^2})
   \\
@@ -173,7 +173,7 @@ obtain (once again dropping a constant, and a $\ln K$)
 \end{eqnarray}
 where now the logsumexp has reared its head.
 
-DWH: Now notice that we don't need the full set of samples to do
+DWH: Now notice that we don't need the full set of samples to
 approximate this integral well.
 
 \section{Method and implementation}
