@@ -2,6 +2,7 @@
 %% Copyright 2015 David W. Hogg
 
 \documentclass[12pt]{article}
+\usepackage{url}
 
 \newcommand{\like}{L}
 \newcommand{\dd}{\mathrm{d}}
@@ -69,7 +70,40 @@ Taking derivatives with respect to parameters,
         \,\left[\sum_{k=1}^K -\frac{1}{2}\,P_k\,\exp(-\frac{1}{2}\,\chi^2_{nk})\,\frac{\dd\chi^2_{nk}}{\dd\theta}\right] \\
   \frac{\dd\chi^2_{nk}}{\dd\theta}
   &=& -2\,[y_n - \mu_{nk}]\transpose\cdot C_n\inverse\cdot\frac{\dd\mu_{nk}}{\dd\theta}
-  \quad,
+  \quad.
 \end{eqnarray}
+
+There is a literature on using the expectation-maximization (E-M)
+algorithm to optimize marginalized likelihoods that have the logsumexp
+form.
+A good pedagogical (but not original) reference is Bishop (2006; ch
+9).
+The E-M algorithm is clever because it optimizes a marginalized
+likelihood of the form of the $Q$ defined above, without ever
+explicitly constructing the marginalized likelihood or its
+derivatives.
+And the proof is beautiful!
+Rumors fly, however, that E-M is not the best optimizer for many
+real problems (Salakhutdinov 2003a, 2003b), and that if we are willing
+to compute the derivatives, we might get to the local optimum faster,
+even given the extra cost per iteration.
+
+\begin{trivlist}\raggedright
+\item
+Bishop,~C., 2006,
+\textit{Pattern Recognition and Machine Learning},
+Springer-Verlag, New York
+{\footnotesize ISBN:978-0-387-31073-2}.
+\item
+Salakhutdinov,~R., Roweis,~S., \& Ghahramani,~Z., 2003a,
+``Optimization with EM and Expectation-Conjugate-Gradient'',
+Proc.~20~ICML,
+{\footnotesize \url{http://www.cs.nyu.edu/~roweis/papers/emecgicml03.pdf}}.
+\item
+Salakhutdinov,~R., Roweis,~S., \& Ghahramani,~Z., 2003b,
+``On the Convergence of Bound Optimization Algorithms'',
+Proc.~19~UAI (UAI2003),
+{\footnotesize \url{http://arxiv.org/abs/1212.2490}}.
+\end{trivlist}
 
 \end{document}
